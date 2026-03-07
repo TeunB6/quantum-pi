@@ -1,0 +1,122 @@
+% presentation.sty — reconstructed from template example
+\ProvidesPackage{presentation}
+
+\usepackage{beamerthemesplit}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{fontenc}
+
+% ---- Palette ----
+\definecolor{DarkBg}{HTML}{1C1C2E}
+\definecolor{AccentBlue}{HTML}{4A90D9}
+\definecolor{AccentCyan}{HTML}{5EC4C0}
+\definecolor{LightText}{HTML}{E8E8F0}
+\definecolor{MidGrey}{HTML}{9999AA}
+\definecolor{CardBg}{HTML}{2A2A40}
+\definecolor{HighlightYellow}{HTML}{F5C842}
+
+% ---- Beamer theme base ----
+\usetheme{default}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\color{AccentBlue}\rule{0.5em}{0.5em}}
+\setbeamertemplate{itemize subitem}{\color{AccentCyan}\small$\bullet$}
+
+% ---- Colors ----
+\setbeamercolor{background canvas}{bg=DarkBg}
+\setbeamercolor{normal text}{fg=LightText}
+\setbeamercolor{frametitle}{fg=white, bg=DarkBg}
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{subtitle}{fg=AccentCyan}
+\setbeamercolor{author}{fg=MidGrey}
+\setbeamercolor{date}{fg=MidGrey}
+\setbeamercolor{block title}{fg=white, bg=AccentBlue}
+\setbeamercolor{block body}{fg=LightText, bg=CardBg}
+\setbeamercolor{alerted text}{fg=HighlightYellow}
+\setbeamercolor{structure}{fg=AccentBlue}
+\setbeamercolor{section in toc}{fg=LightText}
+
+% ---- Fonts ----
+\setbeamerfont{title}{size=\LARGE, series=\bfseries}
+\setbeamerfont{frametitle}{size=\large, series=\bfseries}
+\setbeamerfont{subtitle}{size=\normalsize}
+\setbeamerfont{author}{size=\small}
+\setbeamerfont{date}{size=\footnotesize}
+
+% ---- Frame title ----
+\setbeamertemplate{frametitle}{
+  \vspace*{0.3cm}
+  \usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle
+  \vspace*{0.05cm}
+  \begin{beamercolorbox}[wd=\textwidth, ht=0.5pt]{structure}
+  \end{beamercolorbox}
+}
+
+% ---- Footline ----
+\setbeamertemplate{footline}{
+  \begin{beamercolorbox}[wd=\paperwidth, ht=0.4cm, dp=0.2cm]{structure}
+    \hspace{0.5cm}
+    \textcolor{MidGrey}{\tiny \insertshortauthor \hfill \insertframenumber\,/\,\inserttotalframenumber \hspace{0.4cm}}
+  \end{beamercolorbox}
+}
+
+% ---- \information command (author + event) ----
+\newcommand{\information}[2]{
+  \author[#1]{#1}
+  \date{#2}
+}
+
+% ---- Title page ----
+\setbeamertemplate{title page}{
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[DarkBg] (current page.north west) rectangle (current page.south east);
+    \fill[AccentBlue!30!DarkBg] (current page.north west) rectangle ([yshift=-0.08\paperheight]current page.north east);
+    \draw[AccentCyan, line width=2pt] 
+      ([xshift=0.08\paperwidth, yshift=-0.08\paperheight]current page.north west) --
+      ([xshift=0.08\paperwidth, yshift=-0.92\paperheight]current page.north west);
+  \end{tikzpicture}
+  \vspace{1.2cm}
+  \hspace{0.6cm}
+  \begin{minipage}{0.88\textwidth}
+    {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
+    \vspace{0.3cm}
+    {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}
+    \vspace{0.15cm}
+    {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}
+  \end{minipage}
+}
+
+% ---- Section title frame ----
+\newcommand{\sectionframe}[1]{
+  \begin{frame}
+  \begin{tikzpicture}[remember picture, overlay]
+    \fill[AccentBlue!20!DarkBg] (current page.north west) rectangle (current page.south east);
+  \end{tikzpicture}
+  \vfill
+  \begin{center}
+    {\Large\bfseries\color{white} #1}
+  \end{center}
+  \vfill
+  \end{frame}
+}
+
+% ---- Highlighted box ----
+\newenvironment{highlight}[1][]{
+  \begin{beamercolorbox}[rounded=true, shadow=false, sep=0.3cm, wd=\textwidth]{block body}
+  \ifx&#1&\else{\small\bfseries\color{AccentCyan}#1\\[2pt]}\fi
+}{
+  \end{beamercolorbox}
+}
+
+% ---- Two-column helper ----
+\newcommand{\twocol}[4][0.48]{
+  \begin{columns}[T]
+    \begin{column}{#1\textwidth}#3\end{column}
+    \hfill
+    \begin{column}{#1\textwidth}#4\end{column}
+  \end{columns}
+}

@@ -1,7 +1,7 @@
 [project]
 name = "quantum-pi"
 version = "0.1.0"
-description = "Add your description here"
+description = "Basic Implementation of some quantum circuits for Pi-Day presentation at RUG"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
