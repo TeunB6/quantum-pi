@@ -39,7 +39,7 @@
 \title{Estimating $\pi$: From Fractions to Quantum Circuits}
 \author{Teun Boersma}
 
-\usepackage{biblatex}
+\usepackage[style=apa]{biblatex}
 \addbibresource{references.bib}
 
 \information{Teun Boersma}{$\pi$-Day}
@@ -91,7 +91,11 @@ The some rational numbers can get \alert{very close} to $\pi$...
 \begin{frame}{Results}
     Computing this series in python we can study its convergence... \pause
 
-    
+    \begin{figure}
+        \centering
+        \includegraphics[width=\linewidth]{figures/leibniz_pi_approximation.pdf}
+        \caption{The sequence converges very slowly, we need $10^{10}$ terms to achieve similar accuracy to $\dfrac{103993}{33102}$}
+    \end{figure}
     
 \end{frame}
 
@@ -240,8 +244,66 @@ result = simulator.run(circuit, repetitions=1000)
 \end{frame}
 
 \begin{frame}{Pi Estimation}
-    
+    Since phase estimation can be used to compute $\theta$ in the Pauli-Z gate. What if we change the Pauli-Z gate?\pause
 
+    Defining our own custom gate based on the following matrix:\\
+    $$
+    Z' = \begin{bmatrix}
+        1 & 0 \\
+        0 & e^{i\theta}
+    \end{bmatrix}
+    $$
+    \pause
+
+    By removing $2\pi$ from the gate, the result of the phase estimation algorithm will be $\tilde{\theta} = \frac{\theta}{2\pi}$\pause
+
+    Thus we can calculate $\pi$ from our estimate using $\pi = \frac{\theta}{2\tilde{\theta}}$, for simplicity we set $\theta = 1$.
+
+\end{frame}
+
+\begin{frame}[fragile]{Code}
+    \textbf{Python Code using Cirq:}
+\vspace{0.2cm}
+
+% Moved lstlisting outside of highlight environment
+\begin{lstlisting}[style=cirqstyle]
+def pi_estimation_circuit(n_bits):
+    targets = cirq.LineQubit.range(n_bits)
+    ancilla = cirq.NamedQubit('u')
+
+    unitary = cirq.MatrixGate(np.array([[1, 0], [0, np.exp(1j)]]))
+
+    phase_estimator = cirq.Circuit()
+    phase_estimator.append(cirq.X.on(ancilla))  
+    phase_estimator.append(cirq.H.on_each(*targets))
+
+    for i, bit in enumerate(targets):
+        phase_estimator.append(cirq.ControlledGate(unitary).on(bit, ancilla) ** (2 ** (n_bits - 1 - i)))
+
+    phase_estimator.append(cirq.qft(*targets[::-1], without_reverse=True, inverse=True))
+
+    phase_estimator.append(cirq.measure(*targets, key='result'))
+
+    return phase_estimator
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Results}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\linewidth]{figures/pi_estimation_accuracy.pdf}
+        \caption{Taken from \textcite{article}}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{Further Reading}
+    This algorithm can be extended into higher dimensions: 
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=\linewidth]{figures/highdim.png}
+        \caption{Taken from \textcite{article}}
+    \end{figure}
 \end{frame}
 
 \begin{frame}{References}
