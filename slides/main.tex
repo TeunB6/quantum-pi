@@ -1,31 +1,251 @@
 \documentclass[10pt,xcolor={dvipsnames},hyperref={pdftex,pdfpagemode=UseNone,hidelinks,pdfdisplaydoctitle=true},usepdftitle=false]{beamer}
 
+\usepackage{presentation}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{mathtools}
 \usepackage{tikz}
 \usepackage{booktabs}
 \usepackage{colortbl}
 \usepackage{array}
+\usepackage{qcircuit}
+\usepackage{braket}
 
-\title{Estimating $\pi$: From fractions to Quantum Circuits \\\textit{$\pi$-Day 2026}}
-\information{Matthijs van der Lende}{}
+\lstdefinestyle{cirqstyle}{
+    language=Python,
+    backgroundcolor=\color{CardBg},
+    basicstyle=\ttfamily\scriptsize\color{LightText},
+    keywordstyle=\color{AccentBlue}\bfseries,
+    stringstyle=\color{HighlightYellow},
+    commentstyle=\color{MidGrey}\itshape,
+    numberstyle=\tiny\color{MidGrey},
+    numbers=none,  % or 'left' if you want line numbers
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    framexleftmargin=5pt,
+    framexrightmargin=5pt,
+    frame=single,
+    framesep=5pt,
+    rulecolor=\color{AccentBlue!40},
+    fillcolor=\color{CardBg},
+    tabsize=4,
+    morekeywords={cirq, LineQubit, Simulator, Circuit, H, CNOT, measure, run},
+    emph={import, from, as},
+    emphstyle=\color{AccentCyan}\bfseries
+}
 
-% Rmoves page count
+\title{Estimating $\pi$: From Fractions to Quantum Circuits}
+\author{Teun Boersma}
+
+\usepackage{biblatex}
+\addbibresource{references.bib}
+
+\information{Teun Boersma}{$\pi$-Day}
+% Rmoves page count and headline
 \setbeamertemplate{footline}{}
 \usetikzlibrary{positioning,arrows.meta,shapes.geometric,fit,backgrounds}
-\setbeamertemplate{title page}{
-  \vspace{1.5cm}
-  \hspace{0.5cm}
-  \begin{minipage}{0.88\textwidth}
-    {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
-    \vspace{0.4cm}
-    {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}
-    \vspace{0.15cm}
-    {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}
-  \end{minipage}
-}
+
+\newsavebox{\codebox}
 % --------------------------------
 
 \begin{document}
+
+\frame{\titlepage}
+\section{Formulas for computing $\pi$}
+\sectionframe{Formulas for computing $\pi$}
+\begin{frame}{Fractions}
+\centering
+
+\large
+The some rational numbers can get \alert{very close} to $\pi$...
+
+\vspace{0.5cm}
+
+\begin{tabular}{@{} c c c c @{}}
+\textbf{Step} & \textbf{Fraction} & \textbf{Decimal} & \textbf{Error} \\
+1 & $\dfrac{22}{7}$ & $3.142857$ & $+0.00126$ \\[8pt] \pause
+2 & $\dfrac{333}{106}$ & $3.141509$ & $-0.000083$ \\[8pt] \pause
+3 & $\dfrac{355}{113}$ & $3.141593$ & $+0.00000027$ \\[8pt] \pause
+4 & $\dfrac{103993}{33102}$ & $3.141592653$ & $+6\times10^{-10}$ \\[8pt]
+\end{tabular}
+\footnote{Data from \textcite{oeisA002485} and \textcite{oeisA002486}}
+\vspace{0.5cm}
+\end{frame}
+
+\begin{frame}{Taylor Series}
+    The first step to more complicated formulas is using functions which result in multiples of $\pi$.\pause
+    \\
+    For example, $\arctan{1} = \dfrac{\pi}{4}$. \pause
+
+    The taylor expansion for $\arctan x$ is $T(x) = \sum\limits_{k=0}^\infty\dfrac{(-1)^kx^{2k+1}}{2k+1}$.\pause
+
+    Thus we find $\dfrac{\pi}{4} = \sum\limits_{k=0}^\infty \dfrac{(-1)^k}{2k+1}$. \pause
+
+    \begin{highlight}[Note]
+        This series is named the Leibniz formula for $\pi$
+    \end{highlight}
+\end{frame}
+
+\begin{frame}{Results}
+    Computing this series in python we can study its convergence... \pause
+
+    
+    
+\end{frame}
+
+\section{Quantum Computing Crash Course}
+\sectionframe{First... A Crash Course in Quantum Computing}
+
+\begin{frame}{Quantum Bit}
+    \begin{itemize}
+        \item Basekets $\ket{0}$ and $\ket{1}$
+        \item Generalized state $\ket{\psi} = c_0 \ket{0} + c_1\ket{1}$
+        \item Due to normalization probability of finding the bit in state $\ket{k}$ is given by $|c_k|^2$
+    \end{itemize}
+
+    \begin{block}{Note}
+        
+        This actually generalizes, to qudits where we have basekets $\ket{0}, \ket{1}...\ket{d-1}$ and $\ket{\psi} = \sum\limits_{i=0}^{d-1}c_i\ket{i}$
+    \end{block}
+\end{frame}
+
+\begin{frame}{Logic Gates}
+\begin{block}{Hadamard Gate}
+    \[
+    \begin{minipage}{0.2\textwidth}
+        \Qcircuit @C=1.0em @R=0.8em {
+        & \gate{H} & \qw
+        }
+    \end{minipage}
+    \]
+    Sets any input qubit to an equal superposition between $\ket{0}$ and $\ket{1}$
+    
+\end{block}
+\pause
+\begin{block}{Pauli-Z Gate}
+    \[
+    \begin{minipage}{0.2\textwidth}
+        \Qcircuit @C=1.0em @R=0.8em {
+        & \gate{Z^\theta} & \qw
+        }
+    \end{minipage}
+    \]
+
+    This gate rotates around the Z direction of the Bloch Sphere, in matrix form $Z =\begin{bmatrix}
+        1 & 0 \\
+        0 & e^{i\pi\theta}
+    \end{bmatrix}$. This adds a phase term to the quantum state.
+\end{block}
+\end{frame}
+
+\begin{frame}{Logic Gates}
+    \begin{block}{Pauli-X (NOT) Gate}
+        \[
+    \begin{minipage}{0.2\textwidth}
+        \Qcircuit @C=1.0em @R=0.8em {
+        & \gate{Z^\theta} & \qw
+        }
+    \end{minipage}
+    \]
+
+    This gate is the quantum equivalent of the classical NOT gate in matrix form $X =\begin{bmatrix}
+        0 & 1 \\
+        1 & 0
+    \end{bmatrix}$. 
+    \end{block}
+    \pause
+
+    \begin{block}{Controlled Gates}
+     \[
+    \begin{minipage}{0.2\textwidth}
+        \Qcircuit @C=1.0em @R=0.8em {
+        & \lstick{0} & \ctrl{1} & \qw\\
+        & \lstick{1} &  \gate{X} & \qw
+        }
+    \end{minipage}
+    \] 
+    A controlled gate only affects the target qubit if the control bit is in state $\ket{1}$. This can thus be used to create entangled states.
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{A simple Example}
+\begin{columns}[T]
+
+% Left column - QCircuit diagram
+\begin{column}{0.48\textwidth}
+\centering
+We create a basic quantum circuit applying what we just learnt:\vspace{0.5cm}
+
+\Qcircuit @C=1em @R=1em {
+    \lstick{\ket{0}} & \gate{H} & \ctrl{1} & \qw & \rstick{\frac{\ket{00}+\ket{11}}{\sqrt{2}}} \\
+    \lstick{\ket{0}} & \qw & \gate{X} & \qw & \rstick{}
+}
+
+\vspace{0.5cm}
+When measuring the state, we find:
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{c|c}
+        $\ket{00}$ & 473 \\
+        $\ket{01}$ & 0 \\
+        $\ket{10}$ & 0 \\
+        $\ket{11}$ & 527 \\
+    \end{tabular}
+\end{table}
+
+\end{column}
+
+% Right column - Cirq code
+\begin{column}{0.48\textwidth}
+\textbf{Python Code using Cirq:}
+\vspace{0.2cm}
+
+% Moved lstlisting outside of highlight environment
+\begin{lstlisting}[style=cirqstyle]
+simulator = cirq.Simulator()
+qubits = cirq.LineQubit.range(2)
+circuit = cirq.Circuit(
+    cirq.H(qubits[0]),
+    cirq.CNOT(qubits[0], qubits[1]),
+    cirq.measure(*qubits, key='result')
+)
+result = simulator.run(circuit, repetitions=1000)
+\end{lstlisting}
+
+\end{column}
+
+\end{columns}
+\end{frame}
+
+\section{Estimating $\pi$ with Quantum Circuits}
+\sectionframe{Now onto Estimating $\pi$ with Quantum Circuits}
+\begin{frame}{Phase Estimation}
+    
+\end{frame}
+
+\begin{frame}{A Circuit Diagram of this Process}
+    \[
+\begin{minipage}{0.8\textwidth}
+\Qcircuit @C=1.0em @R=0.8em {
+    & \lstick{0} & \gate{H} & \ctrl{3} & \qw & \qw & \qw & \qw & \qw & \multigate{3}{\text{QFT}} & \qw & \meter & \qw \\
+    & \lstick{1} & \gate{H} & \qw & \ctrl{2} & \qw & \qw & \qw & \qw & \ghost{\text{QFT}} & \qw & \meter & \qw\\
+    & \lstick{2} & \gate{H} & \qw & \qw & \ctrl{1} & \qw & \qw & \qw & \ghost{\text{QFT}} & \qw & \meter & \qw \\
+    & \lstick{u} & \gate{X} & \gate{Z^{0.988}} & \gate{Z^{0.494}} & \gate{Z^{0.247}} & \qw & \qw & \qw & \qw & \qw & \qw & \qw
+}
+\end{minipage}
+\]
+\end{frame}
+
+\begin{frame}{Pi Estimation}
+    
+
+\end{frame}
+
+\begin{frame}{References}
+\printbibliography
+\end{frame}
 
 \end{document}

@@ -9,6 +9,7 @@
 \usepackage{hyperref}
 \usepackage{microtype}
 \usepackage{fontenc}
+\usepackage{listings}
 
 % ---- Palette ----
 \definecolor{DarkBg}{HTML}{1C1C2E}
@@ -48,11 +49,32 @@
 \setbeamerfont{date}{size=\footnotesize}
 
 % ---- Frame title ----
+% \setbeamertemplate{frametitle}{
+%   \vspace*{0.3cm}
+%   \usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle
+%   \vspace*{0.05cm}
+%   \begin{beamercolorbox}[wd=\textwidth, ht=0.5pt]{structure}
+%   \end{beamercolorbox}
+% }
+% ---- Frame title - Integrated minimal ----
 \setbeamertemplate{frametitle}{
-  \vspace*{0.3cm}
-  \usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle
+  \vspace*{0.2cm}
+  \begin{beamercolorbox}[wd=\textwidth]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+    \hfill\tiny\color{MidGrey}\insertframenumber/\inserttotalframenumber
+  \end{beamercolorbox}
   \vspace*{0.05cm}
-  \begin{beamercolorbox}[wd=\textwidth, ht=0.5pt]{structure}
+  \color{AccentBlue!60!AccentCyan}{\hrule height 0.6pt}
+  \vspace*{0.1cm}
+}
+% ---- Headline - Current section highlight ----
+\setbeamertemplate{headline}{
+  \begin{beamercolorbox}[wd=\paperwidth, ht=0.5cm, dp=0.2cm]{structure}
+    \hspace{0.5cm}
+    \textcolor{AccentCyan}{\scriptsize\insertsection}
+    \hfill
+    \textcolor{MidGrey}{\scriptsize\insertframenumber/\inserttotalframenumber}
+    \hspace{0.5cm}
   \end{beamercolorbox}
 }
 
